@@ -67,9 +67,9 @@ const DashboardHeader = ({
           </button>
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-medium">
-              DR
+              DS
             </div>
-            <span className="text-sm font-medium">Dr. Richards</span>
+            <span className="text-sm font-medium">Dr. Singhai</span>
           </div>
         </div>
       </div>
