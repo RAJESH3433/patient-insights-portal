@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,6 +14,7 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,7 +22,11 @@ const Login = () => {
     
     setIsLoading(true);
     try {
-      await login(email, password);
+      const result = await login(email, password);
+      if (result.success && result.phone) {
+        // Navigate to OTP verification page with phone number
+        navigate('/verify-otp', { state: { phone: result.phone } });
+      }
     } catch (error) {
       console.error('Login error:', error);
     } finally {

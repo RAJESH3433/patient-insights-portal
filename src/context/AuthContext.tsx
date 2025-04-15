@@ -13,7 +13,9 @@ type User = {
 type AuthContextType = {
   user: User | null;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<{ success: boolean; phone?: string }>;
+  verifyOtp: (otp: string, phone: string) => Promise<void>;
+  resendOtp: (phone: string) => Promise<void>;
   signup: (name: string, email: string, password: string, role: 'doctor' | 'nurse' | 'admin') => Promise<void>;
   logout: () => void;
 };
@@ -49,11 +51,40 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string): Promise<{ success: boolean; phone?: string }> => {
     try {
       // In a real app, this would be an API call
       // For demo purposes, we'll use mock data
       if (email === 'dr.rajput@example.com' && password === 'password') {
+        // Return phone number for OTP verification instead of logging in right away
+        return { 
+          success: true, 
+          phone: "+91 98765 43210" // Mock phone number for demo
+        };
+      } else {
+        toast({
+          title: "Login failed",
+          description: "Invalid email or password. Try: dr.rajput@example.com / password",
+          variant: "destructive",
+        });
+        return { success: false };
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      toast({
+        title: "Login failed",
+        description: "An error occurred during login.",
+        variant: "destructive",
+      });
+      return { success: false };
+    }
+  };
+
+  const verifyOtp = async (otp: string, phone: string) => {
+    try {
+      // In a real app, this would verify OTP with an API
+      // For demo purposes, any 6-digit OTP will work
+      if (otp.length === 6) {
         const mockUser = {
           id: '1',
           name: 'Dr. Rajput',
@@ -74,16 +105,34 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         navigate('/');
       } else {
         toast({
-          title: "Login failed",
-          description: "Invalid email or password. Try: dr.rajput@example.com / password",
+          title: "Verification failed",
+          description: "Invalid OTP. Please enter a 6-digit code.",
           variant: "destructive",
         });
       }
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('OTP verification error:', error);
       toast({
-        title: "Login failed",
-        description: "An error occurred during login.",
+        title: "Verification failed",
+        description: "An error occurred during OTP verification.",
+        variant: "destructive",
+      });
+    }
+  };
+  
+  const resendOtp = async (phone: string) => {
+    try {
+      // In a real app, this would trigger a new OTP to be sent
+      toast({
+        title: "OTP Resent",
+        description: `A new OTP has been sent to ${phone}`,
+        variant: "default",
+      });
+    } catch (error) {
+      console.error('OTP resend error:', error);
+      toast({
+        title: "Failed to resend OTP",
+        description: "An error occurred while trying to resend the OTP.",
         variant: "destructive",
       });
     }
@@ -133,7 +182,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, login, verifyOtp, resendOtp, signup, logout }}>
       {children}
     </AuthContext.Provider>
   );
