@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import RiskLevelBadge from "./RiskLevelBadge";
 import { CalendarClock, ChevronRight, Phone, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import PatientPdfExport from "./PatientPdfExport";
 
 interface PatientCardProps {
   patient: Patient;
@@ -41,7 +42,12 @@ const PatientCard = ({ patient, onClick }: PatientCardProps) => {
         </div>
         
         <div className="border-t pt-3">
-          <h4 className="text-xs font-medium text-gray-500 mb-1">Conditions</h4>
+          <div className="flex justify-between items-center mb-2">
+            <h4 className="text-xs font-medium text-gray-500">Conditions</h4>
+            <div onClick={(e) => e.stopPropagation()}>
+              <PatientPdfExport patient={patient} />
+            </div>
+          </div>
           <div className="flex flex-wrap gap-1">
             {patient.conditions.map((condition) => (
               <span 
