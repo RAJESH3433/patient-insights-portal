@@ -53,6 +53,9 @@ const OtpVerification = () => {
     return phone.slice(-10).replace(/(\d{6})(\d{4})/, 'XXXXXX$2');
   };
   
+  // Create an array to generate the exact number of slots needed
+  const slots = Array.from({ length: 6 }, (_, i) => i);
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-gray-50 to-blue-50 p-4">
       <div className="w-full max-w-md">
@@ -84,7 +87,7 @@ const OtpVerification = () => {
                 render={({ slots }) => (
                   <InputOTPGroup>
                     {slots.map((slot, index) => (
-                      <InputOTPSlot key={index} {...slot} index={index} />
+                      <InputOTPSlot key={index} {...slot} />
                     ))}
                   </InputOTPGroup>
                 )}
